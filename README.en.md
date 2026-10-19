@@ -36,6 +36,38 @@ That refusal is the point. OCR of clean text is strictly worse than extraction:
 slower, costlier, and it introduces errors where there were none. Use
 [`dsh-pdf2md`](https://www.npmjs.com/package/dsh-pdf2md) for those documents.
 
+## Install
+
+### As a DSH plugin (recommended)
+
+```bash
+dsh plugin --profile web add dsh-scan2md
+```
+
+Desktop clients use their own profile name (the default is `desktop`):
+
+```bash
+dsh plugin --profile desktop add dsh-scan2md
+```
+
+`dsh plugin add` installs the package into the profile **and registers it in `dsh.profile.bundles` automatically** — verified on a fresh profile, where one command added the entry. Restart DSH and `scan2md` appears in the skill catalog.
+
+Without the `dsh` command, `pnpm add dsh-scan2md` plus a manual entry in the profile's `dsh.profile.bundles` works too.
+
+### Python dependencies (required)
+
+Python 3.10+ with `pymupdf`, `numpy`, `rapidocr_onnxruntime`:
+
+```bash
+<python> -m pip install -r skills/scan2md/requirements.txt
+```
+
+Verify before a long run:
+
+```bash
+<python> -c "import pymupdf, numpy, rapidocr_onnxruntime; print('ok')"
+```
+
 ## Usage
 
 ```bash

@@ -19,13 +19,21 @@ provenance, and honest about what OCR damages.
 
 ## 安装
 
-### 作为 DSH 插件
+### 作为 DSH 插件（推荐）
 
 ```bash
-pnpm add dsh-scan2md
+dsh plugin --profile web add dsh-scan2md
 ```
 
-然后把 `dsh-scan2md` 加进 profile 的 `dsh.profile.bundles`。重启后技能清单出现 `scan2md`。
+桌面客户端把 profile 名换成你的（默认 `desktop`）：
+
+```bash
+dsh plugin --profile desktop add dsh-scan2md
+```
+
+`dsh plugin add` 会把包装进 profile，**并自动登记到 `dsh.profile.bundles`**（实测：全新 profile 一条命令，bundles 就多出这一项）。重启后技能清单出现 `scan2md`。
+
+不用 `dsh` 命令的话，也可以 `pnpm add dsh-scan2md`，再手动把包名加进 profile `package.json` 的 `dsh.profile.bundles`。
 
 ### Python 依赖（必须）
 
