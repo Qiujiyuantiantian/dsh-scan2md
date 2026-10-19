@@ -1,0 +1,20 @@
+# Runtime dependencies for the scan2md skill.
+#
+# Install into the interpreter that will run scripts/scan2md.py:
+#   <python> -m pip install -r requirements.txt
+#
+# China mirror (much faster there):
+#   <python> -m pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+#
+# Verify afterwards:
+#   <python> -c "import pymupdf, numpy, rapidocr_onnxruntime; print('ok')"
+
+# Page rasterisation and text-layer probing.
+pymupdf>=1.24
+
+# Array handling for the bleeds-through filter and box geometry.
+numpy>=1.26
+
+# Chinese+English OCR. PP-OCR models are downloaded on first construction;
+# they are cached under the user profile afterwards.
+rapidocr_onnxruntime>=1.3

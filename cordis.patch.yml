@@ -1,0 +1,16 @@
+# dsh-scan2md — DSH bundle patch.
+#
+# Registers the `scan2md` skill into ctx.skills: OCR for scanned/image-only PDFs,
+# resumable, with per-page provenance and a quality report.
+#
+# Pairs with dsh-pdf2md, which handles documents that DO have a text layer.
+# Runtime requirements are Python-side (see skills/scan2md/requirements.txt);
+# this package has no npm dependencies and mounts no MCP server.
+#
+# Must be wrapped in `- insert:` — a bare `- id: ...` row only overrides an
+# existing row's config and is silently ignored for new ids.
+
+- insert:
+    - id: scan2md-skill
+      name: 'dsh-scan2md/startup'
+      inject: [skills]

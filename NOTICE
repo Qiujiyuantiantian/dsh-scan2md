@@ -1,0 +1,55 @@
+dsh-scan2md
+===========
+
+Copyright (c) 2026 Qiujiyuantiantian. Licensed under MIT (see LICENSE).
+
+This package is original work by this project. It does not vendor or copy source
+code from any external project. It calls third-party libraries at run time; they
+are installed by the user and are not distributed here.
+
+Provenance of the recognition strategy
+--------------------------------------
+
+The page-level strategy in `skills/scan2md/scripts/scan2md.py` — bleed-through
+filtering by dark-pixel ratio, visual-line clustering, document-wide header and
+footer removal, and dot-gated heading promotion — is **adapted from a working
+pipeline written earlier in the same user's other workspace**
+(`G:\Deepseek生成读书skill区\tools\ocr_book.py`), which had already been validated
+against two real scanned Chinese textbooks.
+
+That earlier script established the measured thresholds reused here:
+
+  * ghost text from the reverse side sits at ~0.0% dark pixels inside its box,
+    the faintest genuine line (a bare equation number) at ~3.7%;
+  * a bare integer at the start of a line is usually a misread Greek symbol in a
+    nomenclature list, not a heading, so heading promotion requires a dot;
+  * running heads repeat on ≥20% of pages within the top 12% / bottom 15% bands.
+
+This package's contribution is the surrounding engineering: a `probe` command
+that refuses documents which already have a text layer, per-page checkpointing
+so a multi-hour run resumes, a machine-readable progress log, and a quality
+report that names the low-confidence lines.
+
+Runtime dependencies (not bundled)
+----------------------------------
+
+  PyMuPDF — Artifex Software, AGPL-3.0
+      Page rasterisation and text-layer probing. Called, not shipped or modified.
+
+  RapidOCR (rapidocr_onnxruntime) — Apache-2.0
+      PP-OCR detection and recognition. Models are downloaded on first use and
+      cached in the user profile, not in this package.
+
+  NumPy — BSD-3-Clause
+      Array operations for the bleed-through filter.
+
+  Node.js built-ins only on the JavaScript side — this package has no npm
+  dependencies.
+
+Licence note for redistributors
+-------------------------------
+
+This package's own code is MIT. PyMuPDF's AGPL-3.0 status is the user's concern
+when they install it; it is not relicensed here. If you wrap this skill in a
+network service, review the AGPL obligations attached to PyMuPDF before
+deploying.

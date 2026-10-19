@@ -1,0 +1,14 @@
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.log
+.DS_Store
+Thumbs.db
+
+# conversion artifacts
+*.scan2md/
+_pdf2md_test/
+*.tables/
+*.tgz

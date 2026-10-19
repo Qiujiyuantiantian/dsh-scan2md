@@ -1,0 +1,49 @@
+{
+  "name": "dsh-scan2md",
+  "version": "0.1.0",
+  "description": "DSH skill: OCR a scanned or image-only PDF into Markdown, resumably, with per-page checkpoints and a quality report. Refuses documents that already have a text layer.",
+  "type": "module",
+  "main": "lib/startup.js",
+  "exports": {
+    ".": "./lib/startup.js",
+    "./startup": "./lib/startup.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "skills",
+    "cordis.patch.yml",
+    "README.md",
+    "README.en.md",
+    "NOTICE",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "dsh-skill",
+    "ocr",
+    "scanned-pdf",
+    "rapidocr",
+    "markdown",
+    "book-scanning"
+  ],
+  "author": "Qiujiyuantiantian",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Qiujiyuantiantian/dsh-scan2md.git"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}
