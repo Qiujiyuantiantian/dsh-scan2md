@@ -1,0 +1,11 @@
+# Development-only dependencies. Runtime needs are in
+# skills/scan2md/requirements.txt.
+#
+#   <python> -m pip install -r tests/requirements-dev.txt
+#   <python> -m pytest tests -q
+
+pytest>=8.0
+
+# Runtime dependencies, installed too, so tests can build fixtures and exercise
+# the real OCR engine.
+-r ../skills/scan2md/requirements.txt

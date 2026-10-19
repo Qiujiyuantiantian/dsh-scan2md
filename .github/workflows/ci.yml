@@ -1,0 +1,71 @@
+name: ci
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  python:
+    name: python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r tests/requirements-dev.txt
+
+      - name: Byte-compile the tool
+        run: python -m py_compile skills/scan2md/scripts/scan2md.py
+
+      # The first construction of RapidOCR downloads PP-OCR models (~10 MB);
+      # that happens inside the test run, not here.
+      - name: Run test suite
+        run: python -m pytest tests -q
+
+  node:
+    name: node bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Syntax check
+        run: node --check lib/startup.js
+
+      - name: Registration smoke test
+        run: |
+          node -e "
+          import('./lib/startup.js').then((m) => {
+            const seen = [];
+            m.default({ skills: { register: (s) => seen.push(s) } });
+            if (seen.length !== 1) { console.error('expected 1 registration, got', seen.length); process.exit(1); }
+            const skill = seen[0];
+            if (skill.name !== 'scan2md') { console.error('unexpected name', skill.name); process.exit(1); }
+            if (!skill.description) { console.error('empty description'); process.exit(1); }
+            if (!skill.resourceBase || !skill.resourceBase.path) { console.error('missing resourceBase'); process.exit(1); }
+            console.log('registered', skill.name, '/', skill.content.length, 'chars');
+          }).catch((e) => { console.error(e); process.exit(1); });
+          "
+
+      - name: Bundle payload check
+        run: |
+          npm pack --dry-run 2>&1 | tee pack.log
+          for f in "skills/scan2md/SKILL.md" "skills/scan2md/scripts/scan2md.py" "skills/scan2md/requirements.txt" "cordis.patch.yml" "lib/startup.js"; do
+            grep -q "$f" pack.log || { echo "missing from package: $f"; exit 1; }
+          done
+          echo "package contents verified"
