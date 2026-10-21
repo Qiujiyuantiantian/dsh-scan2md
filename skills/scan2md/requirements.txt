@@ -10,11 +10,22 @@
 #   <python> -c "import pymupdf, numpy, rapidocr_onnxruntime; print('ok')"
 
 # Page rasterisation and text-layer probing.
-pymupdf>=1.24
+#
+# Upper bound is deliberate, same reasoning as dsh-pdf2md: PyMuPDF 2.0 shipped
+# 2026-10-19, requires Python >= 3.11, and has not been tested against this code.
+# An unbounded ">=1.24" silently pulls it and changes behaviour under the caller.
+pymupdf>=1.24,<2
 
 # Array handling for the bleeds-through filter and box geometry.
-numpy>=1.26
+# Capped below 3.0 for the same reason: a major bump is a break, not a free upgrade.
+numpy>=1.26,<3
 
-# Chinese+English OCR. PP-OCR models are downloaded on first construction;
-# they are cached under the user profile afterwards.
-rapidocr_onnxruntime>=1.3
+# Chinese+English OCR. The PP-OCRv4 models ship INSIDE this wheel (det 4.5 MB,
+# rec 10.4 MB, cls 0.6 MB = 15.4 MB), so pip install fetches them and the first
+# run does not go online. Verified by unpacking
+# rapidocr_onnxruntime-1.4.4-py3-none-any.whl: models/*.onnx.
+#
+# Also note the Python ceiling: rapidocr_onnxruntime declares
+# requires_python "<3.13,>=3.6", so this stack does NOT install on Python 3.13.
+# Supported and CI-tested: 3.11 and 3.12.
+rapidocr_onnxruntime>=1.3,<2

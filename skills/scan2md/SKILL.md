@@ -96,7 +96,10 @@ metadata:
 
 ## 找一个能用的 Python
 
-需要 Python 3.10+ 且装了 `pymupdf`、`numpy`、`rapidocr_onnxruntime`。
+需要 **Python 3.11 或 3.12**（CI 实测范围）且装了 `pymupdf`、`numpy`、`rapidocr_onnxruntime`。
+
+**3.13 装不上**：`rapidocr_onnxruntime` 声明 `requires_python <3.13`，pip 会直接拒绝，不是「可能不兼容」。
+**模型不需要单独下载**：PP-OCRv4 的 det/rec/cls 三个模型（合计 15.4 MB）打在 `rapidocr_onnxruntime` 的 wheel 里，`pip install` 时就下完了，首次运行不再联网。
 
 按顺序试，第一个能导入的就是：
 

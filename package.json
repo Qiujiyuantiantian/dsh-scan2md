@@ -1,6 +1,6 @@
 {
   "name": "dsh-scan2md",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "DSH skill: OCR a scanned or image-only PDF into Markdown, resumably, with per-page checkpoints and a quality report. Refuses documents that already have a text layer.",
   "type": "module",
   "main": "lib/startup.js",

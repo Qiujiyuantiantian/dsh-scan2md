@@ -35,13 +35,21 @@ dsh plugin --profile desktop add dsh-scan2md
 
 不用 `dsh` 命令的话，也可以 `pnpm add dsh-scan2md`，再手动把包名加进 profile `package.json` 的 `dsh.profile.bundles`。
 
-### Python 依赖（必须）
+### Python 依赖（必须；Python 3.11–3.12）
 
 ```bash
 <python> -m pip install -r skills/scan2md/requirements.txt
 # 国内加镜像
 <python> -m pip install -r skills/scan2md/requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
+
+**体积与联网说明**（实测，不是估计）：
+
+- **OCR 模型打在包里，`pip install` 时就下完了，首次运行不再联网。** `rapidocr_onnxruntime` 自带 PP-OCRv4 三个模型——检测 4.5 MB、识别 10.4 MB、方向分类 0.6 MB，**合计 15.4 MB**（wheel 本身 14.2 MB）。
+- 真正占体积的是它的依赖，Windows 下五个主包合计约 **142 MB** 下载量：`pymupdf` 约 60 MB、`opencv-python` 约 42 MB、`onnxruntime` 约 14 MB、`rapidocr_onnxruntime` 约 14 MB、`numpy` 约 12 MB。其余平台量级相近。
+- 所以：**装一次要等一会儿，但装完之后跑多久都不再联网。** 如果公司网络需要白名单，放行的是 `pypi.org`（或镜像站），不需要额外的模型下载域名。
+
+**Python 版本是有上界的**：`rapidocr_onnxruntime` 声明 `requires_python <3.13`，所以**这套依赖在 Python 3.13 上装不上**，不是"没测过"，是 pip 直接拒绝。CI 覆盖 **3.11 / 3.12** 两个版本，这两档是实测可用的。3.10 未在 CI 覆盖——理论上应当可用，但没跑过就不写进承诺。
 
 验证：
 

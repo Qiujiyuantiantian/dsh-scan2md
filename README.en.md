@@ -54,13 +54,33 @@ dsh plugin --profile desktop add dsh-scan2md
 
 Without the `dsh` command, `pnpm add dsh-scan2md` plus a manual entry in the profile's `dsh.profile.bundles` works too.
 
-### Python dependencies (required)
+### Python dependencies (required; Python 3.11–3.12)
 
-Python 3.10+ with `pymupdf`, `numpy`, `rapidocr_onnxruntime`:
+Python 3.11–3.12 with `pymupdf`, `numpy`, `rapidocr_onnxruntime`:
 
 ```bash
 <python> -m pip install -r skills/scan2md/requirements.txt
 ```
+
+**Size and network use** (measured, not estimated):
+
+- **The OCR models ship inside the package, so `pip install` fetches them and the
+  first run does not go online.** `rapidocr_onnxruntime` bundles three PP-OCRv4
+  models — detection 4.5 MB, recognition 10.4 MB, orientation 0.6 MB,
+  **15.4 MB in total** (the wheel itself is 14.2 MB).
+- The bulk is in its dependencies: on Windows the five main packages come to
+  roughly **142 MB** of download — `pymupdf` ~60 MB, `opencv-python` ~42 MB,
+  `onnxruntime` ~14 MB, `rapidocr_onnxruntime` ~14 MB, `numpy` ~12 MB. Other
+  platforms are in the same range.
+- So: **one slow install, then no network at all.** If a corporate proxy needs an
+  allow-list entry, it is `pypi.org` (or your mirror) — there is no separate
+  model-download host to open.
+
+**The Python version has a ceiling.** `rapidocr_onnxruntime` declares
+`requires_python <3.13`, so this stack **will not install on Python 3.13** — pip
+refuses it, it is not merely untested. CI covers **3.11 and 3.12**, which are the
+versions actually exercised. 3.10 is not in the matrix: it should work, but it has
+not been run, so it is not claimed.
 
 Verify before a long run:
 
@@ -105,11 +125,8 @@ claim checkable.
 
 ## Requirements
 
-Python 3.10+ with `pymupdf`, `numpy`, `rapidocr_onnxruntime`:
-
-```bash
-<python> -m pip install -r skills/scan2md/requirements.txt
-```
+See [Python dependencies](#python-dependencies-required-python-310) above — the
+same three packages, Python 3.10+, models included in the wheel.
 
 The usual failure is installing the OCR package into a different interpreter than
 the one that has `pymupdf`. Verify before a long run:

@@ -12,6 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+      # 3.13 is deliberately absent: rapidocr_onnxruntime declares
+      # requires_python "<3.13", so the OCR stack cannot install there at all.
+      # 3.10 is absent because it has never been exercised here; if you add it
+      # and it goes green, update the README's supported range to say so.
       matrix:
         python-version: ["3.11", "3.12"]
     steps:
@@ -35,8 +39,9 @@ jobs:
       - name: Byte-compile the tool
         run: python -m py_compile skills/scan2md/scripts/scan2md.py
 
-      # The first construction of RapidOCR downloads PP-OCR models (~10 MB);
-      # that happens inside the test run, not here.
+      # No model download happens at any point: rapidocr_onnxruntime ships the
+      # PP-OCRv4 det/rec/cls models inside its own wheel (15.4 MB total). pip
+      # install is the only network access this job needs.
       - name: Run test suite
         run: python -m pytest tests -q
 
